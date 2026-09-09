@@ -72,24 +72,52 @@ def criar_cartas(quantidade_pares):
 
     cartas = []
 
-    # Pega os símbolos necessários
-    # dependendo do nível escolhido
-
     for i in range(quantidade_pares):
 
         simbolo = simbolos[i]
 
-        # Cada símbolo precisa aparecer duas vezes
-        # para formar um par
 
         cartas.append(simbolo)
         cartas.append(simbolo)
 
-    # Embaralha as posições das cartas
 
     random.shuffle(cartas)
 
     return cartas
+
+def criar_tabuleiro(linhas, colunas, cartas):
+
+
+    if type(linhas) != int or type(colunas) != int:
+
+        raise TypeError(
+            "Linhas e colunas precisam ser números inteiros."
+        )
+
+
+    if linhas * colunas != len(cartas):
+
+        raise ValueError(
+            "A quantidade de cartas não corresponde ao tabuleiro."
+        )
+
+    matriz = []
+
+    indice = 0
+
+    for i in range(linhas):
+
+        linha = []
+
+        for j in range(colunas):
+
+            linha.append(cartas[indice])
+
+            indice = indice + 1
+
+        matriz.append(linha)
+
+    return matriz
 
 
 
