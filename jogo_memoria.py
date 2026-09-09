@@ -1,6 +1,6 @@
 import random
 
-[
+simbolos = [
     "★",
     "♥",
     "◆",
@@ -67,3 +67,31 @@ def escolher_nivel():
                 quantidade_pares = 12
 
             return linhas, colunas, quantidade_pares
+
+def criar_cartas(quantidade_pares):
+
+    cartas = []
+
+    # Pega os símbolos necessários
+    # dependendo do nível escolhido
+
+    for i in range(quantidade_pares):
+
+        simbolo = simbolos[i]
+
+        # Cada símbolo precisa aparecer duas vezes
+        # para formar um par
+
+        cartas.append(simbolo)
+        cartas.append(simbolo)
+
+    # Embaralha as posições das cartas
+
+    random.shuffle(cartas)
+
+    return cartas
+
+
+
+
+
