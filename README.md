@@ -6,7 +6,21 @@ Projeto desenvolvido em Python com o objetivo de criar um jogo da memória execu
 
 O jogador deve escolher duas posições do tabuleiro por vez para tentar encontrar pares de símbolos iguais.
 
-O jogo contará com diferentes níveis de dificuldade, alterando o tamanho do tabuleiro e a quantidade de pares.
+O jogo conta com diferentes níveis de dificuldade, alterando o tamanho do tabuleiro e a quantidade de pares.
+
+## Organização do código
+
+O arquivo `jogo_memoria.py` foi dividido em blocos para facilitar a leitura e a apresentação:
+
+* Configurações gerais
+* Funções de apoio visual
+* Preparação do jogo
+* Exibição do tabuleiro e das informações
+* Validação das jogadas
+* Fluxo principal da partida
+* Menu e tela de ajuda
+
+As funções possuem anotações de tipo e comentários explicando a intenção de cada parte importante do jogo.
 
 ## Funcionalidades
 

@@ -1,145 +1,177 @@
+"""
+Jogo da Memória no terminal.
+
+Este arquivo foi organizado para apresentação em sala:
+- cada função tem uma responsabilidade clara;
+- os comentários explicam a intenção do código;
+- as validações ficam separadas do fluxo principal do jogo.
+"""
+
 import random
+from typing import Dict, List, Tuple
 
 
+# ============================================================================
+# CONFIGURAÇÕES GERAIS
+# ============================================================================
 
-def criar_simbolos():
+# Símbolos usados nas cartas. O jogo cria pares a partir dessa lista.
+SIMBOLOS_BASE = [
+    "★",
+    "♥",
+    "◆",
+    "♣",
+    "♠",
+    "☀",
+    "☂",
+    "♫",
+    "☾",
+    "✿",
+    "✦",
+    "☯",
+]
 
-    simbolos = [
-        "★",
-        "♥",
-        "◆",
-        "♣",
-        "♠",
-        "☀",
-        "☂",
-        "♫",
-        "☾",
-        "✿",
-        "✦",
-        "☯"
-    ]
+# Cada nível guarda: nome, quantidade de linhas, colunas e pares.
+NIVEIS: Dict[int, Tuple[str, int, int, int]] = {
+    1: ("Fácil", 3, 4, 6),
+    2: ("Médio", 4, 4, 8),
+    3: ("Difícil", 4, 6, 12),
+}
 
-    return simbolos
+CARTA_ESCONDIDA = "■"
+LARGURA_CABECALHO = 35
+LARGURA_BLOCO = 30
 
 
-def limpar_tela():
+# ============================================================================
+# FUNÇÕES DE APOIO VISUAL
+# ============================================================================
 
+def imprimir_cabecalho(titulo: str) -> None:
+    """Mostra um título centralizado para separar as telas do jogo."""
+    print(f"\n{'=' * LARGURA_CABECALHO}")
+    print(f"{titulo:^{LARGURA_CABECALHO}}")
+    print("=" * LARGURA_CABECALHO)
+
+
+def imprimir_bloco(titulo: str) -> None:
+    """Mostra um subtítulo para destacar uma etapa dentro da partida."""
+    print(f"\n{'-' * LARGURA_BLOCO}")
+    print(f"{titulo:^{LARGURA_BLOCO}}")
+    print("-" * LARGURA_BLOCO)
+
+
+def limpar_tela() -> None:
+    """Simula a limpeza do terminal imprimindo várias linhas em branco."""
     print("\n" * 25)
 
 
-def escolher_nivel():
+# ============================================================================
+# PREPARAÇÃO DO JOGO
+# ============================================================================
 
+def criar_simbolos() -> List[str]:
+    """
+    Retorna uma cópia da lista de símbolos.
+
+    A cópia evita que outras partes do programa alterem a lista original sem
+    querer. Assim, a base de símbolos fica sempre preservada.
+    """
+    return SIMBOLOS_BASE.copy()
+
+
+def escolher_nivel() -> Tuple[int, int, int]:
+    """
+    Pede ao jogador o nível da partida.
+
+    Retorna:
+        linhas: quantidade de linhas do tabuleiro;
+        colunas: quantidade de colunas do tabuleiro;
+        quantidade_pares: total de pares que o jogador precisa encontrar.
+    """
     while True:
+        imprimir_cabecalho("ESCOLHA O NÍVEL")
 
-        print("\n===================================")
-        print("          ESCOLHA O NÍVEL")
-        print("===================================")
-
-        print("1 - Fácil   - 3 x 4 - 6 pares")
-        print("2 - Médio   - 4 x 4 - 8 pares")
-        print("3 - Difícil - 4 x 6 - 12 pares")
+        for codigo, (nome, linhas, colunas, pares) in NIVEIS.items():
+            print(f"{codigo} - {nome:<7} - {linhas} x {colunas} - {pares} pares")
 
         try:
+            nivel = int(input("\nDigite o nível desejado: "))
 
-            nivel = int(
-                input("\nDigite o nível desejado: ")
-            )
-
-            if nivel < 1 or nivel > 3:
-
-                raise ValueError(
-                    "Escolha somente 1, 2 ou 3."
-                )
+            if nivel not in NIVEIS:
+                raise ValueError("Escolha somente 1, 2 ou 3.")
 
         except ValueError as erro:
-
             print(f"\nERRO: {erro}")
 
         else:
-
-            if nivel == 1:
-
-                linhas = 3
-                colunas = 4
-                quantidade_pares = 6
-
-            elif nivel == 2:
-
-                linhas = 4
-                colunas = 4
-                quantidade_pares = 8
-
-            else:
-
-                linhas = 4
-                colunas = 6
-                quantidade_pares = 12
-
+            _, linhas, colunas, quantidade_pares = NIVEIS[nivel]
             return linhas, colunas, quantidade_pares
 
 
-def criar_cartas(quantidade_pares, simbolos):
+def criar_cartas(quantidade_pares: int, simbolos: List[str]) -> List[str]:
+    """
+    Cria a lista de cartas da partida.
 
-    cartas = []
+    Cada símbolo aparece duas vezes, formando um par. Depois disso, a lista é
+    embaralhada para que o tabuleiro fique diferente a cada partida.
+    """
+    if quantidade_pares > len(simbolos):
+        raise ValueError("Não existem símbolos suficientes para esse nível.")
 
-    for i in range(quantidade_pares):
+    cartas: List[str] = []
 
-        simbolo = simbolos[i]
-
-        cartas.append(simbolo)
-        cartas.append(simbolo)
+    for indice in range(quantidade_pares):
+        simbolo = simbolos[indice]
+        cartas.extend([simbolo, simbolo])
 
     random.shuffle(cartas)
-
     return cartas
 
 
-def criar_tabuleiro(linhas, colunas, cartas):
+def criar_tabuleiro(
+    linhas: int,
+    colunas: int,
+    cartas: List[str],
+) -> List[List[str]]:
+    """
+    Transforma a lista embaralhada de cartas em uma matriz.
 
-    if type(linhas) != int or type(colunas) != int:
-
-        raise TypeError(
-            "Linhas e colunas precisam ser números inteiros."
-        )
+    Exemplo de matriz:
+        [
+            ["★", "♥", "★"],
+            ["♣", "♥", "♣"],
+        ]
+    """
+    if not isinstance(linhas, int) or not isinstance(colunas, int):
+        raise TypeError("Linhas e colunas precisam ser números inteiros.")
 
     if linhas * colunas != len(cartas):
+        raise ValueError("A quantidade de cartas não corresponde ao tabuleiro.")
 
-        raise ValueError(
-            "A quantidade de cartas não corresponde ao tabuleiro."
-        )
+    matriz: List[List[str]] = []
 
-    matriz = []
-
-    indice = 0
-
-    for i in range(linhas):
-
-        linha = []
-
-        for j in range(colunas):
-
-            linha.append(cartas[indice])
-
-            indice = indice + 1
-
-        matriz.append(linha)
+    for linha_atual in range(linhas):
+        inicio = linha_atual * colunas
+        fim = inicio + colunas
+        matriz.append(cartas[inicio:fim])
 
     return matriz
 
 
-def criar_matriz_reveladas(linhas, colunas):
+def criar_matriz_reveladas(linhas: int, colunas: int) -> List[List[bool]]:
+    """
+    Cria uma matriz que controla quais cartas estão viradas para cima.
 
-    matriz = []
+    False significa carta escondida.
+    True significa carta revelada.
+    """
+    matriz: List[List[bool]] = []
 
-    for i in range(linhas):
+    for _ in range(linhas):
+        linha: List[bool] = []
 
-        linha = []
-
-        for j in range(colunas):
-
-            # False significa que a carta
-            # ainda está escondida
-
+        for _ in range(colunas):
             linha.append(False)
 
         matriz.append(linha)
@@ -147,495 +179,278 @@ def criar_matriz_reveladas(linhas, colunas):
     return matriz
 
 
-def mostrar_tabuleiro(tabuleiro, reveladas):
+# ============================================================================
+# EXIBIÇÃO DO TABULEIRO E DAS INFORMAÇÕES
+# ============================================================================
 
-    print("\n===================================")
-    print("          JOGO DA MEMÓRIA")
-    print("===================================\n")
+def mostrar_tabuleiro(
+    tabuleiro: List[List[str]],
+    reveladas: List[List[bool]],
+) -> None:
+    """Mostra o tabuleiro com índices de linha e coluna para orientar o jogador."""
+    imprimir_cabecalho("JOGO DA MEMÓRIA")
 
-    print("    ", end="")
+    print("\n    ", end="")
 
-    for j in range(len(tabuleiro[0])):
-
-        print(f"{j}   ", end="")
-
-    print()
-
-    print("   ", end="")
-
-    for j in range(len(tabuleiro[0])):
-
-        print("----", end="")
+    for coluna in range(len(tabuleiro[0])):
+        print(f"{coluna:^4}", end="")
 
     print()
+    print("   " + "----" * len(tabuleiro[0]))
 
-    for i in range(len(tabuleiro)):
+    for linha in range(len(tabuleiro)):
+        print(f"{linha} | ", end="")
 
-        print(f"{i} | ", end="")
-
-        for j in range(len(tabuleiro[i])):
-
-            if reveladas[i][j] == True:
-
-                print(
-                    f"{tabuleiro[i][j]}   ",
-                    end=""
-                )
-
-            else:
-
-                print("■   ", end="")
+        for coluna in range(len(tabuleiro[linha])):
+            carta_visivel = reveladas[linha][coluna]
+            conteudo = tabuleiro[linha][coluna] if carta_visivel else CARTA_ESCONDIDA
+            print(f"{conteudo:^4}", end="")
 
         print()
 
     print()
 
 
+def mostrar_informacoes(
+    pares_encontrados: int,
+    quantidade_pares: int,
+    tentativas: int,
+) -> None:
+    """Mostra o progresso da partida abaixo do tabuleiro."""
+    print(f"Pares encontrados: {pares_encontrados}/{quantidade_pares}")
+    print(f"Tentativas realizadas: {tentativas}")
 
-def validar_posicao(linha, coluna, reveladas):
+
+def mostrar_pares_encontrados(lista_pares: List[str]) -> None:
+    """Lista os símbolos que já foram encontrados pelo jogador."""
+    print("\nPares encontrados até agora:")
+    print(" ".join(lista_pares))
 
 
+# ============================================================================
+# VALIDAÇÃO DAS JOGADAS
+# ============================================================================
+
+def validar_posicao(
+    linha: int,
+    coluna: int,
+    reveladas: List[List[bool]],
+) -> bool:
+    """
+    Confere se a posição escolhida existe e ainda está escondida.
+
+    O uso de exceções deixa a função escolher_carta mais clara: ela tenta ler a
+    jogada e, se algo estiver errado, apenas mostra a mensagem do erro.
+    """
     if linha < 0 or linha >= len(reveladas):
-
-        raise IndexError(
-            "Essa linha não existe no tabuleiro."
-        )
-
+        raise IndexError("Essa linha não existe no tabuleiro.")
 
     if coluna < 0 or coluna >= len(reveladas[linha]):
+        raise IndexError("Essa coluna não existe no tabuleiro.")
 
-        raise IndexError(
-            "Essa coluna não existe no tabuleiro."
-        )
-
-
-    if reveladas[linha][coluna] == True:
-
-        raise ValueError(
-            "Essa carta já está revelada."
-        )
+    if reveladas[linha][coluna]:
+        raise ValueError("Essa carta já está revelada.")
 
     return True
 
 
-def escolher_carta(reveladas):
+def escolher_carta(reveladas: List[List[bool]]) -> Tuple[int, int]:
+    """
+    Pede linha e coluna até o jogador escolher uma carta válida.
 
+    A função só termina quando consegue retornar uma posição que pode ser usada
+    no tabuleiro.
+    """
     while True:
-
         try:
+            linha = int(input("Digite a linha: "))
+            coluna = int(input("Digite a coluna: "))
 
-            linha = int(
-                input("Digite a linha: ")
-            )
-
-            coluna = int(
-                input("Digite a coluna: ")
-            )
-
-            validar_posicao(
-                linha,
-                coluna,
-                reveladas
-            )
+            validar_posicao(linha, coluna, reveladas)
 
         except ValueError as erro:
-
-            print(
-                f"\nERRO DE ENTRADA: {erro}"
-            )
+            print(f"\nERRO DE ENTRADA: {erro}")
 
         except IndexError as erro:
-
-            print(
-                f"\nERRO DE POSIÇÃO: {erro}"
-            )
+            print(f"\nERRO DE POSIÇÃO: {erro}")
 
         else:
-
             return linha, coluna
 
         finally:
-
-            print("-" * 30)
+            print("-" * LARGURA_BLOCO)
 
 
 def verificar_par(
-        tabuleiro,
-        linha1,
-        coluna1,
-        linha2,
-        coluna2
-):
-
+    tabuleiro: List[List[str]],
+    linha1: int,
+    coluna1: int,
+    linha2: int,
+    coluna2: int,
+) -> bool:
+    """Compara duas cartas e informa se elas formam um par."""
     carta1 = tabuleiro[linha1][coluna1]
-
     carta2 = tabuleiro[linha2][coluna2]
 
-    if carta1 == carta2:
-
-        return True
-
-    else:
-
-        return False
+    return carta1 == carta2
 
 
+# ============================================================================
+# FLUXO PRINCIPAL DA PARTIDA
+# ============================================================================
 
-def mostrar_informacoes(
-        pares_encontrados,
-        quantidade_pares,
-        tentativas
-):
-
-    print(
-        f"Pares encontrados: "
-        f"{pares_encontrados}/{quantidade_pares}"
-    )
-
-    print(
-        f"Tentativas realizadas: "
-        f"{tentativas}"
-    )
-
-
-def jogar():
-
+def jogar() -> None:
+    """Controla uma partida completa do jogo da memória."""
     limpar_tela()
 
+    # Etapa 1: o jogador escolhe o tamanho do desafio.
     linhas, colunas, quantidade_pares = escolher_nivel()
 
+    # Etapa 2: o programa monta o baralho, o tabuleiro e o controle visual.
     simbolos = criar_simbolos()
-    
-    cartas = criar_cartas(
-    quantidade_pares,
-    simbolos
-)
+    cartas = criar_cartas(quantidade_pares, simbolos)
 
     try:
-
-        tabuleiro = criar_tabuleiro(
-            linhas,
-            colunas,
-            cartas
-        )
+        tabuleiro = criar_tabuleiro(linhas, colunas, cartas)
 
     except TypeError as erro:
-
-        print(
-            f"\nERRO DE TIPO: {erro}"
-        )
-
+        print(f"\nERRO DE TIPO: {erro}")
         return
 
     except ValueError as erro:
-
-        print(
-            f"\nERRO: {erro}"
-        )
-
+        print(f"\nERRO: {erro}")
         return
 
-    reveladas = criar_matriz_reveladas(
-        linhas,
-        colunas
-    )
-
-
-    lista_pares = []
-
-
+    reveladas = criar_matriz_reveladas(linhas, colunas)
+    lista_pares: List[str] = []
     pares_encontrados = 0
-
     tentativas = 0
 
-
+    # Etapa 3: o laço continua até todos os pares serem encontrados.
     while pares_encontrados < quantidade_pares:
-
         limpar_tela()
 
-        mostrar_tabuleiro(
-            tabuleiro,
-            reveladas
-        )
+        mostrar_tabuleiro(tabuleiro, reveladas)
+        mostrar_informacoes(pares_encontrados, quantidade_pares, tentativas)
 
-
-        mostrar_informacoes(
-            pares_encontrados,
-            quantidade_pares,
-            tentativas
-        )
-
-
-        print("\n------------------------------")
-        print("        PRIMEIRA CARTA")
-        print("------------------------------")
-
-        linha1, coluna1 = escolher_carta(
-            reveladas
-        )
-
-
+        imprimir_bloco("PRIMEIRA CARTA")
+        linha1, coluna1 = escolher_carta(reveladas)
         reveladas[linha1][coluna1] = True
 
-
         limpar_tela()
+        mostrar_tabuleiro(tabuleiro, reveladas)
 
-        mostrar_tabuleiro(
-            tabuleiro,
-            reveladas
-        )
-
-        print("\n------------------------------")
-        print("        SEGUNDA CARTA")
-        print("------------------------------")
-
-        linha2, coluna2 = escolher_carta(
-            reveladas
-        )
-
+        imprimir_bloco("SEGUNDA CARTA")
+        linha2, coluna2 = escolher_carta(reveladas)
         reveladas[linha2][coluna2] = True
 
-        tentativas = tentativas + 1
+        tentativas += 1
 
         limpar_tela()
+        mostrar_tabuleiro(tabuleiro, reveladas)
 
-        mostrar_tabuleiro(
-            tabuleiro,
-            reveladas
-        )
+        resultado = verificar_par(tabuleiro, linha1, coluna1, linha2, coluna2)
 
-
-        resultado = verificar_par(
-            tabuleiro,
-            linha1,
-            coluna1,
-            linha2,
-            coluna2
-        )
-
-
-        if resultado == True:
-
+        if resultado:
             print("\nPAR ENCONTRADO!")
 
-            simbolo_encontrado = (
-                tabuleiro[linha1][coluna1]
-            )
+            simbolo_encontrado = tabuleiro[linha1][coluna1]
+            lista_pares.append(simbolo_encontrado)
+            pares_encontrados += 1
 
-            lista_pares.append(
-                simbolo_encontrado
-            )
+            print(f"\nSímbolo encontrado: {simbolo_encontrado}")
+            mostrar_pares_encontrados(lista_pares)
 
-            pares_encontrados = (
-                pares_encontrados + 1
-            )
+            input("\nPressione ENTER para continuar...")
 
-            print(
-                f"\nSímbolo encontrado: "
-                f"{simbolo_encontrado}"
-            )
+        else:
+            print("\nAs cartas são diferentes.")
+            input("\nPressione ENTER para escondê-las novamente...")
 
-            print("\nPares encontrados até agora:")
-
-            for simbolo in lista_pares:
-
-                print(
-                    simbolo,
-                    end=" "
-                )
-
-            print()
-
-            input(
-                "\nPressione ENTER para continuar..."
-            )
-
+            # Quando não há par, as duas cartas voltam a ficar escondidas.
+            reveladas[linha1][coluna1] = False
+            reveladas[linha2][coluna2] = False
 
     limpar_tela()
+    mostrar_tabuleiro(tabuleiro, reveladas)
 
-    mostrar_tabuleiro(
-        tabuleiro,
-        reveladas
-    )
-
-
-    print("\n===================================")
-    print("             VOCÊ GANHOU!")
-    print("===================================")
-
-
-    print(
-        f"\nVocê encontrou todos os "
-        f"{quantidade_pares} pares!"
-    )
-
-
-    print(
-        f"Total de tentativas: "
-        f"{tentativas}"
-    )
-
+    imprimir_cabecalho("VOCÊ GANHOU!")
+    print(f"\nVocê encontrou todos os {quantidade_pares} pares!")
+    print(f"Total de tentativas: {tentativas}")
 
     print("\nSímbolos encontrados:")
+    print(" ".join(lista_pares))
+    print()
 
 
-    for simbolo in lista_pares:
+# ============================================================================
+# MENU E TELA DE AJUDA
+# ============================================================================
 
-        print(
-            simbolo,
-            end=" "
-        )
-
-
-    print("\n")
-
-
-def mostrar_como_jogar():
-
+def mostrar_como_jogar() -> None:
+    """Explica as regras antes de iniciar uma partida."""
     limpar_tela()
 
     simbolos = criar_simbolos()
 
-    print("\n===================================")
-    print("            COMO JOGAR")
-    print("===================================")
+    imprimir_cabecalho("COMO JOGAR")
 
-    print(
-        "\nO objetivo do jogo é encontrar "
-        "todos os pares de símbolos."
-    )
+    print("\nObjetivo:")
+    print("Encontrar todos os pares de símbolos do tabuleiro.")
 
-    print(
-        "\nCada posição do tabuleiro possui "
-        "uma linha e uma coluna."
-    )
+    print("\nComo funciona:")
+    print("1. Escolha a linha e a coluna da primeira carta.")
+    print("2. Escolha a linha e a coluna da segunda carta.")
+    print("3. Se forem iguais, elas continuam abertas.")
+    print("4. Se forem diferentes, elas voltam a ficar escondidas.")
 
-    print(
-        "\nPrimeiro escolha a linha e a coluna "
-        "da primeira carta."
-    )
+    print("\nSímbolos utilizados:")
+    print("  ".join(simbolos))
 
-    print(
-        "Depois escolha a linha e a coluna "
-        "da segunda carta."
-    )
+    print("\nNíveis disponíveis:")
 
-    print(
-        "\nSe as duas cartas forem iguais, "
-        "elas continuarão abertas."
-    )
-
-    print(
-        "Se forem diferentes, "
-        "elas serão escondidas novamente."
-    )
-
-    print("\nOs símbolos utilizados são:\n")
-
-
-    for simbolo in simbolos:
-
+    for codigo, (nome, linhas, colunas, pares) in NIVEIS.items():
         print(
-            simbolo,
-            end="  "
+            f"{codigo} - {nome}: "
+            f"{linhas} linhas x {colunas} colunas | {pares} pares"
         )
 
-
-    print("\n")
-
-
-    print("Níveis disponíveis:")
-
-
-    print(
-        "\n1 - Fácil:"
-        "\n3 linhas x 4 colunas"
-        "\n6 pares"
-    )
-
-
-    print(
-        "\n2 - Médio:"
-        "\n4 linhas x 4 colunas"
-        "\n8 pares"
-    )
-
-
-    print(
-        "\n3 - Difícil:"
-        "\n4 linhas x 6 colunas"
-        "\n12 pares"
-    )
-
-
-    input(
-        "\nPressione ENTER para voltar ao menu..."
-    )
-
+    input("\nPressione ENTER para voltar ao menu...")
     limpar_tela()
 
 
-
-def iniciar_programa():
-
+def iniciar_programa() -> None:
+    """Exibe o menu principal e direciona o usuário para cada parte do jogo."""
     while True:
-
-        print("\n===================================")
-        print("          JOGO DA MEMÓRIA")
-        print("===================================")
+        imprimir_cabecalho("JOGO DA MEMÓRIA")
 
         print("\n1 - Jogar")
         print("2 - Como jogar")
         print("3 - Encerrar")
 
-
         try:
-
-            opcao = int(
-                input("\nEscolha uma opção: ")
-            )
-
+            opcao = int(input("\nEscolha uma opção: "))
 
             if opcao < 1 or opcao > 3:
-
-                raise ValueError(
-                    "Escolha somente 1, 2 ou 3."
-                )
-
+                raise ValueError("Escolha somente 1, 2 ou 3.")
 
         except ValueError as erro:
-
-            print(
-                f"\nERRO: {erro}"
-            )
-
+            print(f"\nERRO: {erro}")
 
         else:
-
             if opcao == 1:
-
                 jogar()
 
-
             elif opcao == 2:
-
                 mostrar_como_jogar()
 
-
             elif opcao == 3:
-
-                print(
-                    "\nPrograma encerrado."
-                )
-
+                print("\nPrograma encerrado.")
                 break
 
-
         finally:
-
-            print(
-                "\n" + "-" * 35
-            )
+            print("\n" + "-" * LARGURA_CABECALHO)
 
 
-iniciar_programa()
+if __name__ == "__main__":
+    iniciar_programa()
