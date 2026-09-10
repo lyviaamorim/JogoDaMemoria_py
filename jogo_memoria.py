@@ -255,6 +255,27 @@ def escolher_carta(reveladas):
         finally:
 
             print("-" * 30)
+            
+
+def verificar_par(
+        tabuleiro,
+        linha1,
+        coluna1,
+        linha2,
+        coluna2
+):
+
+    carta1 = tabuleiro[linha1][coluna1]
+
+    carta2 = tabuleiro[linha2][coluna2]
+
+    if carta1 == carta2:
+
+        return True
+
+    else:
+
+        return False
 
 
 def jogar():
