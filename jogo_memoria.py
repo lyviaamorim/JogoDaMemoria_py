@@ -21,6 +21,7 @@ def limpar_tela():
 
     print("\n" * 25)
 
+
 def escolher_nivel():
 
     while True:
@@ -71,10 +72,6 @@ def escolher_nivel():
 
             return linhas, colunas, quantidade_pares
 
-
-# ------------------------------------------------------------
-# CRIAR LISTA DE CARTAS
-# ------------------------------------------------------------
 
 def criar_cartas(quantidade_pares):
 
@@ -255,7 +252,7 @@ def escolher_carta(reveladas):
         finally:
 
             print("-" * 30)
-            
+
 
 def verificar_par(
         tabuleiro,
@@ -386,4 +383,48 @@ def jogar():
             reveladas
         )
 
-        break
+
+        resultado = verificar_par(
+            tabuleiro,
+            linha1,
+            coluna1,
+            linha2,
+            coluna2
+        )
+
+
+        if resultado == True:
+
+            print("\nPAR ENCONTRADO!")
+
+            simbolo_encontrado = (
+                tabuleiro[linha1][coluna1]
+            )
+
+            lista_pares.append(
+                simbolo_encontrado
+            )
+
+            pares_encontrados = (
+                pares_encontrados + 1
+            )
+
+            print(
+                f"\nSímbolo encontrado: "
+                f"{simbolo_encontrado}"
+            )
+
+            print("\nPares encontrados até agora:")
+
+            for simbolo in lista_pares:
+
+                print(
+                    simbolo,
+                    end=" "
+                )
+
+            print()
+
+            input(
+                "\nPressione ENTER para continuar..."
+            )
