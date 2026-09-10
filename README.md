@@ -342,7 +342,7 @@ Durante o desenvolvimento foram utilizados:
 
 # Divisão das responsabilidades
 
-## Yasmin — Pessoa 1
+## Yasmin
 
 Yasmin participou principalmente da **estrutura inicial e preparação do jogo**.
 
@@ -358,9 +358,9 @@ Sua participação ajudou a construir a base utilizada pelas demais etapas do pr
 
 ---
 
-## Lívia — Pessoa 2
+## Lyvia 
 
-Lívia participou principalmente da **interação do jogador com o tabuleiro e controle das posições**.
+Lyvia participou principalmente da **interação do jogador com o tabuleiro e controle das posições**.
 
 Suas atividades envolveram apoio na implementação de partes como:
 
@@ -375,7 +375,7 @@ Essa parte foi importante para permitir que o usuário realmente interagisse com
 
 ---
 
-## Manuela — Pessoa 3
+## Manuela
 
 Manuela ficou responsável principalmente pela **integração, finalização e organização geral do projeto**.
 
