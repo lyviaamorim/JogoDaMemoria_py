@@ -275,6 +275,24 @@ def verificar_par(
         return False
 
 
+
+def mostrar_informacoes(
+        pares_encontrados,
+        quantidade_pares,
+        tentativas
+):
+
+    print(
+        f"Pares encontrados: "
+        f"{pares_encontrados}/{quantidade_pares}"
+    )
+
+    print(
+        f"Tentativas realizadas: "
+        f"{tentativas}"
+    )
+
+
 def jogar():
 
     limpar_tela()
@@ -334,14 +352,10 @@ def jogar():
         )
 
 
-        print(
-            f"Pares encontrados: "
-            f"{pares_encontrados}/{quantidade_pares}"
-        )
-
-        print(
-            f"Tentativas realizadas: "
-            f"{tentativas}"
+        mostrar_informacoes(
+            pares_encontrados,
+            quantidade_pares,
+            tentativas
         )
 
 
@@ -428,3 +442,4 @@ def jogar():
             input(
                 "\nPressione ENTER para continuar..."
             )
+    
