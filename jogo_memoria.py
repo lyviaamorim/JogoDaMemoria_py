@@ -165,22 +165,43 @@ def mostrar_tabuleiro(tabuleiro, reveladas):
 
         for j in range(len(tabuleiro[i])):
 
-            # Se a carta estiver revelada,
-            # mostra o símbolo
+            # Se a carta estiver revelada, mostra o símbolo
             if reveladas[i][j] == True:
                 print(
                     f"{tabuleiro[i][j]} ",
                     end=""
                 )
 
-            # Se estiver escondida,
-            # mostra um quadrado
+            # Se estiver escondida, mostra um quadrado
             else:
                 print("■ ", end="")
 
         print()
+        
+def validar_posicao(linha, coluna, reveladas):
 
-    print()
+    # Verifica se a linha existe
+    if linha < 0 or linha >= len(reveladas):
+        raise IndexError(
+            "Essa linha não existe no tabuleiro."
+        )
+
+    # Verifica se a coluna existe
+    if coluna < 0 or coluna >= len(reveladas[linha]):
+        raise IndexError(
+            "Essa coluna não existe no tabuleiro."
+        )
+
+    # Não permite escolher uma carta
+    # que já esteja aberta
+    if reveladas[linha][coluna] == True:
+        raise ValueError(
+            "Essa carta já está revelada."
+        )
+
+    return True
+
+  
 
 
 
