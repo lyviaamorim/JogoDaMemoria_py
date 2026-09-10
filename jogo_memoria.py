@@ -136,6 +136,51 @@ def criar_matriz_reveladas(linhas, colunas):
 
     return matriz
 
+def mostrar_tabuleiro(tabuleiro, reveladas):
+
+    print("\n===================================")
+    print(" JOGO DA MEMÓRIA")
+    print("===================================\n")
+
+    # Mostra o número das colunas
+    print(" ", end="")
+
+    for j in range(len(tabuleiro[0])):
+        print(f"{j} ", end="")
+
+    print()
+
+    print(" ", end="")
+
+    for j in range(len(tabuleiro[0])):
+        print("----", end="")
+
+    print()
+
+    # Percorre a matriz
+    for i in range(len(tabuleiro)):
+
+        # Mostra o número da linha
+        print(f"{i} | ", end="")
+
+        for j in range(len(tabuleiro[i])):
+
+            # Se a carta estiver revelada,
+            # mostra o símbolo
+            if reveladas[i][j] == True:
+                print(
+                    f"{tabuleiro[i][j]} ",
+                    end=""
+                )
+
+            # Se estiver escondida,
+            # mostra um quadrado
+            else:
+                print("■ ", end="")
+
+        print()
+
+    print()
 
 
 
