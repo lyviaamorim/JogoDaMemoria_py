@@ -1,20 +1,25 @@
 import random
 
 
-simbolos = [
-    "★",
-    "♥",
-    "◆",
-    "♣",
-    "♠",
-    "☀",
-    "☂",
-    "♫",
-    "☾",
-    "✿",
-    "✦",
-    "☯"
-]
+
+def criar_simbolos():
+
+    simbolos = [
+        "★",
+        "♥",
+        "◆",
+        "♣",
+        "♠",
+        "☀",
+        "☂",
+        "♫",
+        "☾",
+        "✿",
+        "✦",
+        "☯"
+    ]
+
+    return simbolos
 
 
 def limpar_tela():
@@ -73,7 +78,7 @@ def escolher_nivel():
             return linhas, colunas, quantidade_pares
 
 
-def criar_cartas(quantidade_pares):
+def criar_cartas(quantidade_pares, simbolos):
 
     cartas = []
 
@@ -299,10 +304,12 @@ def jogar():
 
     linhas, colunas, quantidade_pares = escolher_nivel()
 
-
+    simbolos = criar_simbolos()
+    
     cartas = criar_cartas(
-        quantidade_pares
-    )
+    quantidade_pares,
+    simbolos
+)
 
     try:
 
@@ -481,3 +488,154 @@ def jogar():
 
 
     print("\n")
+
+
+def mostrar_como_jogar():
+
+    limpar_tela()
+
+    simbolos = criar_simbolos()
+
+    print("\n===================================")
+    print("            COMO JOGAR")
+    print("===================================")
+
+    print(
+        "\nO objetivo do jogo é encontrar "
+        "todos os pares de símbolos."
+    )
+
+    print(
+        "\nCada posição do tabuleiro possui "
+        "uma linha e uma coluna."
+    )
+
+    print(
+        "\nPrimeiro escolha a linha e a coluna "
+        "da primeira carta."
+    )
+
+    print(
+        "Depois escolha a linha e a coluna "
+        "da segunda carta."
+    )
+
+    print(
+        "\nSe as duas cartas forem iguais, "
+        "elas continuarão abertas."
+    )
+
+    print(
+        "Se forem diferentes, "
+        "elas serão escondidas novamente."
+    )
+
+    print("\nOs símbolos utilizados são:\n")
+
+
+    for simbolo in simbolos:
+
+        print(
+            simbolo,
+            end="  "
+        )
+
+
+    print("\n")
+
+
+    print("Níveis disponíveis:")
+
+
+    print(
+        "\n1 - Fácil:"
+        "\n3 linhas x 4 colunas"
+        "\n6 pares"
+    )
+
+
+    print(
+        "\n2 - Médio:"
+        "\n4 linhas x 4 colunas"
+        "\n8 pares"
+    )
+
+
+    print(
+        "\n3 - Difícil:"
+        "\n4 linhas x 6 colunas"
+        "\n12 pares"
+    )
+
+
+    input(
+        "\nPressione ENTER para voltar ao menu..."
+    )
+
+    limpar_tela()
+
+
+
+def iniciar_programa():
+
+    while True:
+
+        print("\n===================================")
+        print("          JOGO DA MEMÓRIA")
+        print("===================================")
+
+        print("\n1 - Jogar")
+        print("2 - Como jogar")
+        print("3 - Encerrar")
+
+
+        try:
+
+            opcao = int(
+                input("\nEscolha uma opção: ")
+            )
+
+
+            if opcao < 1 or opcao > 3:
+
+                raise ValueError(
+                    "Escolha somente 1, 2 ou 3."
+                )
+
+
+        except ValueError as erro:
+
+            print(
+                f"\nERRO: {erro}"
+            )
+
+
+        else:
+
+            if opcao == 1:
+
+                jogar()
+
+
+            elif opcao == 2:
+
+                mostrar_como_jogar()
+
+
+            elif opcao == 3:
+
+                print(
+                    "\nPrograma encerrado."
+                )
+
+                break
+
+
+        finally:
+
+            print(
+                "\n" + "-" * 35
+            )
+
+
+iniciar_programa()
