@@ -177,7 +177,7 @@ def mostrar_tabuleiro(tabuleiro, reveladas):
                 print("■ ", end="")
 
         print()
-        
+
 def validar_posicao(linha, coluna, reveladas):
 
     # Verifica se a linha existe
@@ -201,6 +201,45 @@ def validar_posicao(linha, coluna, reveladas):
 
     return True
 
+def escolher_carta(reveladas):
+
+    while True:
+
+        try:
+
+            linha = int(
+                input("Digite a linha: ")
+            )
+
+            coluna = int(
+                input("Digite a coluna: ")
+            )
+
+            validar_posicao(
+                linha,
+                coluna,
+                reveladas
+            )
+
+        except ValueError as erro:
+
+            print(
+                f"\nERRO DE ENTRADA: {erro}"
+            )
+
+        except IndexError as erro:
+
+            print(
+                f"\nERRO DE POSIÇÃO: {erro}"
+            )
+
+        else:
+
+            return linha, coluna
+
+        finally:
+
+            print("-" * 30)
   
 
 
