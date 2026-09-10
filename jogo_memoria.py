@@ -442,4 +442,42 @@ def jogar():
             input(
                 "\nPressione ENTER para continuar..."
             )
-    
+
+
+    limpar_tela()
+
+    mostrar_tabuleiro(
+        tabuleiro,
+        reveladas
+    )
+
+
+    print("\n===================================")
+    print("             VOCÊ GANHOU!")
+    print("===================================")
+
+
+    print(
+        f"\nVocê encontrou todos os "
+        f"{quantidade_pares} pares!"
+    )
+
+
+    print(
+        f"Total de tentativas: "
+        f"{tentativas}"
+    )
+
+
+    print("\nSímbolos encontrados:")
+
+
+    for simbolo in lista_pares:
+
+        print(
+            simbolo,
+            end=" "
+        )
+
+
+    print("\n")
