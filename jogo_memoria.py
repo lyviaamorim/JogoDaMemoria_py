@@ -1,5 +1,6 @@
 import random
 
+
 simbolos = [
     "★",
     "♥",
@@ -15,7 +16,9 @@ simbolos = [
     "☯"
 ]
 
+
 def limpar_tela():
+
     print("\n" * 25)
 
 def escolher_nivel():
@@ -68,6 +71,11 @@ def escolher_nivel():
 
             return linhas, colunas, quantidade_pares
 
+
+# ------------------------------------------------------------
+# CRIAR LISTA DE CARTAS
+# ------------------------------------------------------------
+
 def criar_cartas(quantidade_pares):
 
     cartas = []
@@ -76,24 +84,21 @@ def criar_cartas(quantidade_pares):
 
         simbolo = simbolos[i]
 
-
         cartas.append(simbolo)
         cartas.append(simbolo)
-
 
     random.shuffle(cartas)
 
     return cartas
 
-def criar_tabuleiro(linhas, colunas, cartas):
 
+def criar_tabuleiro(linhas, colunas, cartas):
 
     if type(linhas) != int or type(colunas) != int:
 
         raise TypeError(
             "Linhas e colunas precisam ser números inteiros."
         )
-
 
     if linhas * colunas != len(cartas):
 
@@ -119,6 +124,7 @@ def criar_tabuleiro(linhas, colunas, cartas):
 
     return matriz
 
+
 def criar_matriz_reveladas(linhas, colunas):
 
     matriz = []
@@ -129,77 +135,86 @@ def criar_matriz_reveladas(linhas, colunas):
 
         for j in range(colunas):
 
-            # False significa que a carta ainda está escondida
+            # False significa que a carta
+            # ainda está escondida
+
             linha.append(False)
 
         matriz.append(linha)
 
     return matriz
 
+
 def mostrar_tabuleiro(tabuleiro, reveladas):
 
     print("\n===================================")
-    print(" JOGO DA MEMÓRIA")
+    print("          JOGO DA MEMÓRIA")
     print("===================================\n")
 
-    # Mostra o número das colunas
-    print(" ", end="")
+    print("    ", end="")
 
     for j in range(len(tabuleiro[0])):
-        print(f"{j} ", end="")
+
+        print(f"{j}   ", end="")
 
     print()
 
-    print(" ", end="")
+    print("   ", end="")
 
     for j in range(len(tabuleiro[0])):
+
         print("----", end="")
 
     print()
 
-    # Percorre a matriz
     for i in range(len(tabuleiro)):
 
-        # Mostra o número da linha
         print(f"{i} | ", end="")
 
         for j in range(len(tabuleiro[i])):
 
-            # Se a carta estiver revelada, mostra o símbolo
             if reveladas[i][j] == True:
+
                 print(
-                    f"{tabuleiro[i][j]} ",
+                    f"{tabuleiro[i][j]}   ",
                     end=""
                 )
 
-            # Se estiver escondida, mostra um quadrado
             else:
-                print("■ ", end="")
+
+                print("■   ", end="")
 
         print()
 
+    print()
+
+
+
 def validar_posicao(linha, coluna, reveladas):
 
-    # Verifica se a linha existe
+
     if linha < 0 or linha >= len(reveladas):
+
         raise IndexError(
             "Essa linha não existe no tabuleiro."
         )
 
-    # Verifica se a coluna existe
+
     if coluna < 0 or coluna >= len(reveladas[linha]):
+
         raise IndexError(
             "Essa coluna não existe no tabuleiro."
         )
 
-    # Não permite escolher uma carta
-    # que já esteja aberta
+
     if reveladas[linha][coluna] == True:
+
         raise ValueError(
             "Essa carta já está revelada."
         )
 
     return True
+
 
 def escolher_carta(reveladas):
 
@@ -241,53 +256,99 @@ def escolher_carta(reveladas):
 
             print("-" * 30)
 
-from jogo_memoria import (
-    criar_matriz_reveladas,
-    criar_tabuleiro,
-    mostrar_tabuleiro,
-    escolher_carta
-)
 
-def jogar(linhas, colunas, cartas, quantidade_pares):
+def jogar():
 
-    tabuleiro = criar_tabuleiro(
-        linhas,
-        colunas,
-        cartas
+    limpar_tela()
+
+    linhas, colunas, quantidade_pares = escolher_nivel()
+
+
+    cartas = criar_cartas(
+        quantidade_pares
     )
+
+    try:
+
+        tabuleiro = criar_tabuleiro(
+            linhas,
+            colunas,
+            cartas
+        )
+
+    except TypeError as erro:
+
+        print(
+            f"\nERRO DE TIPO: {erro}"
+        )
+
+        return
+
+    except ValueError as erro:
+
+        print(
+            f"\nERRO: {erro}"
+        )
+
+        return
 
     reveladas = criar_matriz_reveladas(
         linhas,
         colunas
     )
 
+
+    lista_pares = []
+
+
     pares_encontrados = 0
+
     tentativas = 0
 
+
     while pares_encontrados < quantidade_pares:
+
+        limpar_tela()
 
         mostrar_tabuleiro(
             tabuleiro,
             reveladas
-)
+        )
 
-        print(f"\nTentativas: {tentativas}")
-        print(f"Pares encontrados: {pares_encontrados}")
 
-        print("\nEscolha a primeira carta:")
+        print(
+            f"Pares encontrados: "
+            f"{pares_encontrados}/{quantidade_pares}"
+        )
+
+        print(
+            f"Tentativas realizadas: "
+            f"{tentativas}"
+        )
+
+
+        print("\n------------------------------")
+        print("        PRIMEIRA CARTA")
+        print("------------------------------")
 
         linha1, coluna1 = escolher_carta(
             reveladas
         )
 
+
         reveladas[linha1][coluna1] = True
+
+
+        limpar_tela()
 
         mostrar_tabuleiro(
             tabuleiro,
             reveladas
-)
+        )
 
-        print("\nEscolha a segunda carta:")
+        print("\n------------------------------")
+        print("        SEGUNDA CARTA")
+        print("------------------------------")
 
         linha2, coluna2 = escolher_carta(
             reveladas
@@ -295,13 +356,13 @@ def jogar(linhas, colunas, cartas, quantidade_pares):
 
         reveladas[linha2][coluna2] = True
 
-        tentativas += 1
+        tentativas = tentativas + 1
+
+        limpar_tela()
 
         mostrar_tabuleiro(
             tabuleiro,
             reveladas
-)
-  
+        )
 
-
-
+        break
