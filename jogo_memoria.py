@@ -119,6 +119,22 @@ def criar_tabuleiro(linhas, colunas, cartas):
 
     return matriz
 
+def criar_matriz_reveladas(linhas, colunas):
+
+    matriz = []
+
+    for i in range(linhas):
+
+        linha = []
+
+        for j in range(colunas):
+
+            # False significa que a carta ainda está escondida
+            linha.append(False)
+
+        matriz.append(linha)
+
+    return matriz
 
 
 
