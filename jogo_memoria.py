@@ -16,20 +16,24 @@ from typing import Dict, List, Tuple
 # ============================================================================
 
 # Símbolos usados nas cartas. O jogo cria pares a partir dessa lista.
-SIMBOLOS_BASE = [
-    "★",
-    "♥",
-    "◆",
-    "♣",
-    "♠",
-    "☀",
-    "☂",
-    "♫",
-    "☾",
-    "✿",
-    "✦",
-    "☯",
-]
+def criar_simbolos() -> List[str]:
+
+    simbolos = [
+        "★",
+        "♥",
+        "◆",
+        "♣",
+        "♠",
+        "☀",
+        "☂",
+        "♫",
+        "☾",
+        "✿",
+        "✦",
+        "☯"
+    ]
+
+    return simbolos
 
 # Cada nível guarda: nome, quantidade de linhas, colunas e pares.
 NIVEIS: Dict[int, Tuple[str, int, int, int]] = {
@@ -69,15 +73,6 @@ def limpar_tela() -> None:
 # ============================================================================
 # PREPARAÇÃO DO JOGO
 # ============================================================================
-
-def criar_simbolos() -> List[str]:
-    """
-    Retorna uma cópia da lista de símbolos.
-
-    A cópia evita que outras partes do programa alterem a lista original sem
-    querer. Assim, a base de símbolos fica sempre preservada.
-    """
-    return SIMBOLOS_BASE.copy()
 
 
 def escolher_nivel() -> Tuple[int, int, int]:
